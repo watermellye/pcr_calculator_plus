@@ -1,5 +1,5 @@
 # pcr_calculate_plus
-合刀计算器 终极版 by ellye
+合刀计算器 终极版 by [ellye](https://github.com/watermellye)
 
 （什么中二名字）
 
