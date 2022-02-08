@@ -1,6 +1,8 @@
 # pcr_calculate_plus
 合刀计算器 终极版 by [ellye](https://github.com/watermellye)
 
+repo地址：https://github.com/pcrbot/pcr_calculate_plus/
+
 （什么中二名字）
 
 ## 输入方法
