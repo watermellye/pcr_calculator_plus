@@ -93,16 +93,19 @@ async def cal(bot, ev: CQEvent):
         remain = int(math.ceil(110 - (90 - t) * (boss / x)))
         outp += f"返还{remain}s"
         await bot.finish(ev, outp)
-    elif eigen in ["12", "22"]:  # 700 30s 61s
+    elif eigen in ["12", "22", "11"]:  # 700 30s 61s
         boss = dam[0]
         x = boss
         if eigen == "22":  # 1800 2000 34s 58s
             boss = min(dam[0], dam[1])
             x = max(dam[0], dam[1])
-        t = min(tim[0], tim[1])
-        tt = max(tim[0], tim[1])
+        t = tim[0]
+        tt = 91 - t
+        if eigen == 12:
+            t = min(tim[0], tim[1])
+            tt = max(tim[0], tim[1])
         outp = f"HP={boss}\ndamage={x}余{t}s\n期望获得{tt}s\n"
-        remain = int(math.ceil(110 - (90 - t) * (boss / x)))
+        remain = min(int(math.ceil(110 - (90 - t) * (boss / x))), 90)
         y = int(math.ceil(delta + boss - x * (111 - tt) / (90 - t)))
         if y > 0:
             outp += f"还需垫入{y}伤害"
