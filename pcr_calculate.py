@@ -4,7 +4,9 @@ from hoshino.typing import CQEvent, MessageSegment
 
 sv = Service('pcr_calculate', enable_on_default=True, help_='''尾刀计算器''')
 
-#110 - 90(boss/x) = 89
+#110 - (90-t)(boss/x) = 89
+
+delta = 0.0000001
 
 helpMsg = "请输入boss剩余血量和两刀伤害（可只输一刀或不输入）\n或：boss血量、造成伤害（缺省为boss血量）、打死时间、期望时间（可无）\n例：cal 700w 400 5000000 / cal 2000 34s 56s"
 
@@ -42,12 +44,12 @@ async def cal(bot, ev: CQEvent):
 
     if eigen == "10":  # cal 1500
         boss = dam[0]
-        outp = f"bossHP={boss}\n"
+        outp = f"HP={boss}\n"
         x = int(boss * 90 / 111)
         #x = boss / (n-1 + 21/90) n刀满补所需伤害
         outp += "刀数 / 满补所需伤害\n"
         for i in range(1, 5):
-            outp += f"{i}刀 \t {int(math.ceil(boss/(i-1+21/90)))}\n"
+            outp += f"{i}刀 \t {int(math.ceil(delta + boss/(i-1+21/90)))}\n"
         await bot.finish(ev, f"{outp}")
     elif eigen == "01":  # cal 50s
         boss = tim[0]
@@ -56,16 +58,16 @@ async def cal(bot, ev: CQEvent):
     elif eigen == "20":  # cal 700 300 / cal 300 700
         boss = dam[0]
         x = dam[1]
-        outp = f"bossHP={boss}\ndamage={x}\n"
+        outp = f"HP={boss}\ndamage={x}\n"
         if x >= boss:
             y = min(90, int(math.ceil(110 - 90 * boss / x)))
-            outp = f"补偿{y}秒"
+            outp += f"补偿{y}秒"
             if y < 90:
-                z = int(math.ceil(boss - 21 / 90 * x))
+                z = int(math.ceil(delta + boss - 21 / 90 * x))
                 outp += f"\n垫入{z}伤害可满补"
             await bot.finish(ev, outp)
-        y = int(math.ceil(90 / 21 * (boss - x)))
-        yy = int(math.ceil(boss - 21 / 90 * x))
+        y = int(math.ceil(delta + 90 / 21 * (boss - x)))
+        yy = int(math.ceil(delta + boss - 21 / 90 * x))
         if yy < y:
             outp += f"另一刀伤害达到{yy}(先出)/{y}(后出)即可满补。"
         else:
@@ -75,7 +77,7 @@ async def cal(bot, ev: CQEvent):
         boss = max(dam[0], dam[1], dam[2])
         y = min(dam[0], dam[1], dam[2])
         x = dam[0] + dam[1] + dam[2] - boss - y
-        outp = f"bossHP={boss}\ndamage1={x}\ndamage2={y}\n"
+        outp = f"HP={boss}\ndamage1={x}\ndamage2={y}\n"
         if x + y < boss:
             outp += f"剩余血量{int(boss - x - y)}"
         else:
@@ -87,7 +89,7 @@ async def cal(bot, ev: CQEvent):
         boss = min(dam[0], dam[1])
         x = max(dam[0], dam[1])
         t = tim[0]
-        outp = f"bossHP={boss}\ndamage={x}余{t}s\n"
+        outp = f"HP={boss}\ndamage={x}余{t}s\n"
         remain = int(math.ceil(110 - (90 - t) * (boss / x)))
         outp += f"返还{remain}s"
         await bot.finish(ev, outp)
@@ -99,9 +101,9 @@ async def cal(bot, ev: CQEvent):
             x = max(dam[0], dam[1])
         t = min(tim[0], tim[1])
         tt = max(tim[0], tim[1])
-        outp = f"bossHP={boss}\ndamage={x}余{t}s\n期望获得{tt}s\n"
+        outp = f"HP={boss}\ndamage={x}余{t}s\n期望获得{tt}s\n"
         remain = int(math.ceil(110 - (90 - t) * (boss / x)))
-        y = int(math.ceil(boss - x * (111 - tt) / (90 - t)))
+        y = int(math.ceil(delta + boss - x * (111 - tt) / (90 - t)))
         if y > 0:
             outp += f"还需垫入{y}伤害"
         else:
