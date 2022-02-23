@@ -101,7 +101,7 @@ async def cal(bot, ev: CQEvent):
             x = max(dam[0], dam[1])
         t = tim[0]
         tt = 91 - t
-        if eigen == 12:
+        if eigen == "12":
             t = min(tim[0], tim[1])
             tt = max(tim[0], tim[1])
         outp = f"HP={boss}\ndamage={x}余{t}s\n期望获得{tt}s\n"
